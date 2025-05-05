@@ -1,30 +1,41 @@
 use std::path;
 use crate::app::error::Error;
 #[derive(Debug, PartialEq)]
-pub struct UrlParser{
-    pub scheme : String,
+
+// struct q armazena os componentes principais de uma URL
+pub struct UrlParser {
+    // "protocolo" da URL, como "http", "https"..
+    pub scheme: String,
+
+    // nome do host ou dominio, como "localhost".
     pub host: String,
-    pub path: String
+
+    // caminho da URL, como "/index.html" ou "/api/v1/users".
+    pub path: String,
 }
+
 
 impl UrlParser{
 
     pub fn from(url: &str) -> Result<UrlParser, Error> {
+        // se a URL ja começa com http ou https, mantém como está
+        // else, adiciona http:// no começo
         let addr = if url.starts_with("http") || url.starts_with("https"){
             url.to_owned()
         }else {
             format!("http://{}", url)
         };
-
+        // separa o esquema (http ou https) do resto da URL
         let mut split = addr.split("://");
 
-        let scheme = split.next().unwrap().to_string();
-        split = split.next().unwrap().split("/");
+        let scheme = split.next().unwrap().to_string();// pega o esquema
+        split = split.next().unwrap().split("/");// agora separa o restante por /
 
-        let host= split.next().unwrap().to_string();
+        let host= split.next().unwrap().to_string(); // pega o host (domínio) jura? olha o nome da variável catapimbas
 
         let mut path = String::new();
 
+         // Monta o path juntando tudo que sobrou depois do host
         loop{
 
             match split.next() {
